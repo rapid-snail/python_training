@@ -31,7 +31,8 @@ class ContactHelper:
 
     def open_contacts_page(self):
         wd = self.app.wd
-        wd.get("http://localhost/addressbook/")
+        if not wd.current_url.endswith("addressbook/"):
+            wd.get("http://localhost/addressbook/")
 
     def edit_first(self, contact):
         wd = self.app.wd
