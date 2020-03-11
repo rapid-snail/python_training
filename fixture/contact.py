@@ -5,6 +5,7 @@ class ContactHelper:
 
     def __init__(self, app):
         self.app = app
+        self.contact_cache = None
 
     def open_add_new_page(self):
         wd = self.app.wd
@@ -25,10 +26,13 @@ class ContactHelper:
         wd = self.app.wd
         wd.find_element_by_link_text("home").click()
 
-    def delete_first(self):
+    def delete_first_contact(self):
+        self.delete_contact_by_index(0)
+
+    def delete_contact_by_index(self, index):
         wd = self.app.wd
         self.open_contacts_page()
-        wd.find_element_by_name("selected[]").click()
+        wd.find_elements_by_name("selected[]")[index].click()
         wd.find_element_by_xpath("//input[@value='Delete']").click()
         wd.switch_to.alert.accept()
         self.return_to_home_page()
@@ -39,11 +43,14 @@ class ContactHelper:
         if not wd.current_url.endswith("addressbook/"):
             wd.get("http://localhost/addressbook/")
 
-    def edit_first(self, contact):
+    def edit_first_contact(self, contact):
+        self.edit_contact_by_index(index=0, contact=contact)
+
+    def edit_contact_by_index(self, index, contact):
         wd = self.app.wd
         self.open_contacts_page()
-        # нажатие на иконку редактирования первого контакта
-        wd.find_element_by_xpath("//a/img[@title='Edit']").click()
+        # нажатие на иконку редактирования контакта
+        wd.find_elements_by_xpath("//a/img[@title='Edit']")[index].click()
         # редактирование всех полей
         self.fill_fields(contact)
         # submit edition
@@ -81,8 +88,6 @@ class ContactHelper:
         wd = self.app.wd
         self.open_contacts_page()
         return len(wd.find_elements_by_name("selected[]"))
-
-    contact_cache = None
 
     def get_contact_list(self):
         if self.contact_cache is None:
