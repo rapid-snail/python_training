@@ -5,6 +5,7 @@ class GroupHelper:
 
     def __init__(self, app):
         self.app = app
+        self.group_cache = None
 
     def open_groups_page(self):
         wd = self.app.wd
@@ -68,8 +69,6 @@ class GroupHelper:
         wd = self.app.wd
         self.open_groups_page()
         return len(wd.find_elements_by_name("selected[]"))
-
-    group_cache = None
 
     def get_group_list(self):
         if self.group_cache is None:
