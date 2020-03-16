@@ -46,11 +46,16 @@ class ContactHelper:
     def edit_first_contact(self, contact):
         self.edit_contact_by_index(index=0, contact=contact)
 
+    def open_contact_to_edit_by_index(self, index):
+        wd = self.app.wd
+        # нажатие на иконку редактирования контакта
+        wd.find_elements_by_xpath("//a/img[@title='Edit']")[index].click()
+
+
     def edit_contact_by_index(self, index, contact):
         wd = self.app.wd
         self.open_contacts_page()
-        # нажатие на иконку редактирования контакта
-        wd.find_elements_by_xpath("//a/img[@title='Edit']")[index].click()
+        self.open_contact_to_edit_by_index(index)
         # редактирование всех полей
         self.fill_fields(contact)
         # submit edition
@@ -99,5 +104,29 @@ class ContactHelper:
                 contact_id = elm.find_element_by_name("selected[]").get_attribute("value")
                 first_name = elm.find_element_by_xpath(".//td[3]").text
                 last_name = elm.find_element_by_xpath(".//td[2]").text
-                self.contact_cache.append(Contact(id=contact_id, firstname=first_name, lastname=last_name))
+                address = elm.find_element_by_xpath(".//td[4]").text
+                all_emails = elm.find_element_by_xpath(".//td[5]").text
+                all_phones = elm.find_element_by_xpath(".//td[6]").text
+                self.contact_cache.append(Contact(id=contact_id, firstname=first_name, lastname=last_name,
+                                                  address=address, all_emails_from_homepage=all_emails,
+                                                  all_phones_from_homepage=all_phones))
         return list(self.contact_cache)
+
+    def get_contact_info_from_edit_page(self, index):
+        wd = self.app.wd
+        self.open_contacts_page()
+        self.open_contact_to_edit_by_index(index)
+        firstname = wd.find_element_by_name("firstname").get_attribute("value")
+        lastname = wd.find_element_by_name("lastname").get_attribute("value")
+        id = wd.find_element_by_name("id").get_attribute("value")
+        homephone = wd.find_element_by_name("home").get_attribute("value")
+        mobile = wd.find_element_by_name("mobile").get_attribute("value")
+        workphone = wd.find_element_by_name("work").get_attribute("value")
+        phone2 = wd.find_element_by_name("phone2").get_attribute("value")
+        address = wd.find_element_by_name("address").get_attribute("value")
+        email = wd.find_element_by_name("email").get_attribute("value")
+        email2 = wd.find_element_by_name("email2").get_attribute("value")
+        email3 = wd.find_element_by_name("email3").get_attribute("value")
+        return Contact(id=id, firstname=firstname, lastname=lastname, homephone=homephone,
+                       mobile=mobile, workphone=workphone, phone2=phone2, address=address,
+                       email=email, email2=email2, email3=email3)
