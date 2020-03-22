@@ -2,7 +2,7 @@ from model.group import Group
 import string
 import random
 import os.path
-import json
+import jsonpickle
 import getopt
 import sys
 
@@ -36,9 +36,9 @@ test_data = [Group(name="", header="", footer="")] + [
     for i in range(n)
 ]
 
-
 file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", f)
 
 with open(file, "w") as out:
-    # генерация файла при помощи пакета json
-    out.write(json.dumps(test_data, default=lambda x: x.__dict__, indent=2))
+    # генерация файла при помощи пакета jsonpickle
+    jsonpickle.set_encoder_options("json", indent=2)
+    out.write(jsonpickle.encode(test_data))
