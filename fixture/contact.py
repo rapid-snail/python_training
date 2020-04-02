@@ -1,3 +1,4 @@
+import time
 from model.contact import Contact
 
 
@@ -38,6 +39,16 @@ class ContactHelper:
         self.return_to_home_page()
         self.contact_cache = None
 
+    def delete_contact_by_id(self, id):
+        wd = self.app.wd
+        self.open_contacts_page()
+        wd.find_element_by_css_selector("input[id='%s']" % id).click()
+        wd.find_element_by_xpath("//input[@value='Delete']").click()
+        wd.switch_to.alert.accept()
+        time.sleep(1)
+        self.return_to_home_page()
+        self.contact_cache = None
+
     def open_contacts_page(self):
         wd = self.app.wd
         if not wd.current_url.endswith("addressbook/"):
@@ -56,6 +67,22 @@ class ContactHelper:
         wd = self.app.wd
         self.open_contacts_page()
         self.open_contact_to_edit_by_index(index)
+        # редактирование всех полей
+        self.fill_fields(contact)
+        # submit edition
+        wd.find_element_by_xpath("//input[@value='Update']").click()
+        self.return_to_home_page()
+        self.contact_cache = None
+
+    def open_contact_to_edit_by_id(self, id):
+        wd = self.app.wd
+        # нажатие на иконку редактирования контакта
+        wd.find_element_by_css_selector("a[href $= 'id=%s'] img[title=Edit]" % id).click()
+
+    def edit_contact_by_id(self, id, contact):
+        wd = self.app.wd
+        self.open_contacts_page()
+        self.open_contact_to_edit_by_id(id)
         # редактирование всех полей
         self.fill_fields(contact)
         # submit edition
