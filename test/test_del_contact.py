@@ -4,7 +4,7 @@ import re
 
 
 def test_delete_some_contact(app, db, check_ui):
-    if db.get_contact_list() == 0:
+    if len(db.get_contact_list()) == 0:
         app.contact.create(Contact(firstname="firstname"))
     old_contacts = db.get_contact_list()
     random_idx = randrange(len(old_contacts))
